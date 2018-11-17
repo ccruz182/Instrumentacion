@@ -1,8 +1,8 @@
 void setup() {
   /* Pines de escritura (eleccion de sensor) */
-  pinMode(8, OUTPUT); // LSB
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT); // MSB
+  pinMode(48, OUTPUT); // LSB
+  pinMode(50, OUTPUT);
+  pinMode(52, OUTPUT); // MSB
 
   /* Pines de entrada */
   pinMode(22, INPUT); // LSB
@@ -21,17 +21,21 @@ void loop() {
   int valor1, valor2;
   /* Sensor #1 */
   seleccionSensor(LOW, LOW, LOW); // Seleccion del sensor
+  delay(500); // Se espera tiempo
   valor1 = lecturaBits(8); // Lectura del puerto
-  delay(500); // Se espera tiempo
+  
 
-  /* Sensor #2 */
-  seleccionSensor(LOW, LOW, HIGH); // Seleccion del sensor
-  valor2 = lecturaBits(8); // Lectura del puerto
+  /* Sensor #2 */  
+  seleccionSensor(HIGH, LOW, LOW); // Seleccion del sensor
   delay(500); // Se espera tiempo
-
+  valor2 = lecturaBits(8); // Lectura del puerto  
+  
   /* Envio BT */
-  String valores = valor1 + "&" + valor2;
-  Serial.println(valores); // Se envía dato
+  //String valores = valor1 + "&" + valor2;
+  //Serial.println(valores); // Se envía dato
+  Serial.print(valor1);
+  Serial.print("&");
+  Serial.println(valor2);
   Serial.flush(); // Se espera a que se envíe todo para poder continuar
 }
 
@@ -40,16 +44,16 @@ int lecturaBits(int numBits) {
   int base;
   int valor = 0;
   for (i = 0, base = 22; i < numBits; i++, base += 2) {
-    if (digitalRead(base) == HIGH) {
-      valor += pow(2, i);
+    if (digitalRead(base) == HIGH) {         
+      valor +=  (1 << i);
     }
   }
 
   return valor;
 }
 
-void seleccionSensor(int a, int b, int c) {
-  digitalWrite(10, a);
-  digitalWrite(9, b);
-  digitalWrite(8, c);
+void seleccionSensor(int a, int b, int c) {  
+  digitalWrite(48, a);
+  digitalWrite(50, b);
+  digitalWrite(52, c);
 }
